@@ -73,16 +73,19 @@ wss.on('connection', (ws, req) => {
 });
 
 // CORS middleware
-const corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-};
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://stock-market-platform.vercel.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    if (req.method === 'OPTIONS') {
+        return res.status(204).send();
+    }
+    next();
+});
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Body parsing middleware
 app.use(express.json());
