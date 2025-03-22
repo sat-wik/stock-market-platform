@@ -37,7 +37,7 @@ export const register = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
 
-        setCORSHeaders(req, res);
+
         res.status(201).json({
             user: {
                 id: user.id,
@@ -95,7 +95,7 @@ export const login = async (req, res) => {
         };
 
         console.log('Login successful:', { userId: user.id });
-        setCORSHeaders(req, res);
+
         res.json(response);
     } catch (error) {
         console.error('Login error:', error);
