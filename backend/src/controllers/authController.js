@@ -10,20 +10,28 @@ const allowedOrigins = [
 ];
 
 const setCORSHeaders = (req, res) => {
-    const origin = req.headers?.origin || req.headers?.referer || '*';
-    
-    // In development, allow all origins
-    if (process.env.NODE_ENV === 'development') {
-        res.header('Access-Control-Allow-Origin', origin);
-    } else if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-    } else {
-        res.header('Access-Control-Allow-Origin', 'https://stock-market-platform.vercel.app');
+    try {
+        const origin = req.headers?.origin || req.headers?.referer || '*';
+        
+        // In development, allow all origins
+        if (process.env.NODE_ENV === 'development') {
+            res.header('Access-Control-Allow-Origin', origin);
+        } else if (allowedOrigins.includes(origin)) {
+            res.header('Access-Control-Allow-Origin', origin);
+        } else {
+            res.header('Access-Control-Allow-Origin', 'https://stock-market-platform.vercel.app');
+        }
+        
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.header('Access-Control-Allow-Credentials', 'true');
+    } catch (error) {
+        console.error('Error setting CORS headers:', error);
+        // Set default headers if there's an error
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     }
-    
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
 };
 
 export const register = async (req, res) => {
@@ -58,7 +66,7 @@ export const register = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
 
-        setCORSHeaders(res);
+        setCORSHeaders(req, res);
         res.status(201).json({
             user: {
                 id: user.id,
@@ -116,7 +124,7 @@ export const login = async (req, res) => {
         };
 
         console.log('Login successful:', { userId: user.id });
-        setCORSHeaders(res);
+        setCORSHeaders(req, res);
         res.json(response);
     } catch (error) {
         console.error('Login error:', error);
