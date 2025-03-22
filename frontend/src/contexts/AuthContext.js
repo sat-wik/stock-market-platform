@@ -9,8 +9,14 @@ const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
-    }
+    },
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN'
 });
+
+// Set default config for all requests
+axiosInstance.defaults.withCredentials = true;
+axiosInstance.defaults.crossDomain = true;
 
 // Add request interceptor
 axiosInstance.interceptors.request.use(
@@ -81,6 +87,12 @@ export const AuthProvider = ({ children }) => {
             const response = await axiosInstance.post('/api/auth/login', {
                 email,
                 password
+            }, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
             });
             
             console.log('Login response:', response.data);
