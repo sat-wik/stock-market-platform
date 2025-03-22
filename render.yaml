@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: stock-market-backend
+    env: node
+    buildCommand: cd backend && npm ci
+    startCommand: cd backend && npm run migrate && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # Add this manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false # Add this manually in Render dashboard
+
+  - type: web
+    name: stock-market-ml-service
+    env: python
+    buildCommand: cd ml-service && pip install -r requirements.txt
+    startCommand: cd ml-service && python -m flask run --host=0.0.0.0
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONUNBUFFERED
+        value: "true"
