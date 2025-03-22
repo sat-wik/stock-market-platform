@@ -1,10 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 // Configure axios defaults
 axios.defaults.headers.post['Content-Type'] = 'application/json';
-import { API_BASE_URL } from '../config/api';
-
 axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true;
 // Remove Access-Control-Allow-Origin header as it should be set by the server
