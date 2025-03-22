@@ -1,0 +1,16 @@
+name: stock-market-ml
+service:
+  name: ml-service
+  ports:
+    - port: 5000
+      http: /
+  env:
+    - name: FLASK_ENV
+      value: production
+  scale:
+    horizontal:
+      min: 1
+      max: 1
+  routes:
+    - path: /
+      port: 5000
