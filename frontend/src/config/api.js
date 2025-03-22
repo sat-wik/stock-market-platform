@@ -1,5 +1,5 @@
 const isDevelopment = process.env.NODE_ENV === 'development';
-export const API_BASE_URL = isDevelopment ? 'http://localhost:3001' : '';
+export const API_BASE_URL = isDevelopment ? 'http://localhost:3001' : 'https://past-crimson-primrose.glitch.me';
 export const WS_BASE_URL = 'wss://past-crimson-primrose.glitch.me/ws';
 
 export const ENDPOINTS = {
