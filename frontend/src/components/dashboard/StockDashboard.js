@@ -268,56 +268,50 @@ const StockDashboard = () => {
                                                 </IconButton>
                                             }
                                         >
-                                            <ListItemText
-                                                primary={
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                        <Typography 
-                                                            variant="subtitle1" 
-                                                            sx={{ 
-                                                                fontWeight: 600,
-                                                                fontSize: '1.1rem',
-                                                                letterSpacing: '-0.01em'
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                    <Typography 
+                                                        variant="subtitle1" 
+                                                        sx={{ 
+                                                            fontWeight: 600,
+                                                            fontSize: '1.1rem',
+                                                            letterSpacing: '-0.01em'
+                                                        }}
+                                                    >
+                                                        {symbol}
+                                                    </Typography>
+                                                    {stockInfo && (
+                                                        <Chip
+                                                            size="small"
+                                                            icon={isPositive ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                                                            label={`${isPositive ? '+' : ''}${stockInfo.change.toFixed(2)}%`}
+                                                            color={isPositive ? 'success' : 'error'}
+                                                            sx={{
+                                                                fontWeight: 500,
+                                                                background: isPositive 
+                                                                    ? `${theme.palette.success.main}15`
+                                                                    : `${theme.palette.error.main}15`,
+                                                                border: 'none',
+                                                                '& .MuiChip-icon': {
+                                                                    fontSize: '1rem'
+                                                                }
                                                             }}
-                                                        >
-                                                            {symbol}
-                                                        </Typography>
-                                                        {stockInfo && (
-                                                            <Chip
-                                                                size="small"
-                                                                icon={isPositive ? <TrendingUpIcon /> : <TrendingDownIcon />}
-                                                                label={`${isPositive ? '+' : ''}${stockInfo.change.toFixed(2)}%`}
-                                                                color={isPositive ? 'success' : 'error'}
-                                                                sx={{
-                                                                    fontWeight: 500,
-                                                                    background: isPositive 
-                                                                        ? `${theme.palette.success.main}15`
-                                                                        : `${theme.palette.error.main}15`,
-                                                                    border: 'none',
-                                                                    '& .MuiChip-icon': {
-                                                                        fontSize: '1rem'
-                                                                    }
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </Box>
-                                                }
-                                                secondary={
-                                                    <Box sx={{ mt: 0.5 }}>
-                                                        <Typography 
-                                                            variant="h6" 
-                                                            sx={{ 
-                                                                fontWeight: 600,
-                                                                color: theme.palette.text.primary,
-                                                                letterSpacing: '-0.02em'
-                                                            }}
-                                                        >
-                                                            {price 
-                                                                ? `$${price.toFixed(2)}`
-                                                                : 'Loading...'}
-                                                        </Typography>
-                                                    </Box>
-                                                }
-                                            />
+                                                        />
+                                                    )}
+                                                </Box>
+                                                <Typography 
+                                                    variant="h6" 
+                                                    sx={{ 
+                                                        fontWeight: 600,
+                                                        color: theme.palette.text.primary,
+                                                        letterSpacing: '-0.02em'
+                                                    }}
+                                                >
+                                                    {price 
+                                                        ? `$${price.toFixed(2)}`
+                                                        : 'Loading...'}
+                                                </Typography>
+                                            </Box>
                                         </ListItem>
                                     );
                                 })}
