@@ -2,6 +2,22 @@
   "version": 2,
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/logo(.*).png",
+      "dest": "/logo$1.png"
+    },
+    {
       "src": "/api/(.*)",
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       "headers": {

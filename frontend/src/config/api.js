@@ -1,5 +1,5 @@
-const VERCEL_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-export const API_BASE_URL = VERCEL_URL;
+const isDevelopment = process.env.NODE_ENV === 'development';
+export const API_BASE_URL = isDevelopment ? 'http://localhost:3001' : '';
 export const WS_BASE_URL = 'wss://past-crimson-primrose.glitch.me/ws';
 
 export const ENDPOINTS = {
