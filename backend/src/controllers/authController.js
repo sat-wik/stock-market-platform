@@ -22,14 +22,14 @@ const setCORSHeaders = (req, res) => {
             res.header('Access-Control-Allow-Origin', 'https://stock-market-platform.vercel.app');
         }
         
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
         res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         res.header('Access-Control-Allow-Credentials', 'true');
     } catch (error) {
         console.error('Error setting CORS headers:', error);
         // Set default headers if there's an error
         res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
         res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     }
 };
