@@ -74,24 +74,7 @@ wss.on('connection', (ws, req) => {
 
 // CORS middleware
 const corsOptions = {
-    origin: function (origin, callback) {
-        const allowedOrigins = [
-            'https://stock-market-platform.vercel.app',
-            'http://localhost:3000',
-            'http://127.0.0.1:65033'
-        ];
-
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) {
-            return callback(null, true);
-        }
-
-        if (process.env.NODE_ENV === 'development' || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
