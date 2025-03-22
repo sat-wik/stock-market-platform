@@ -1,7 +1,5 @@
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
-export const WS_BASE_URL = process.env.REACT_APP_API_URL 
-    ? process.env.REACT_APP_API_URL.replace('http://', 'ws://').replace('https://', 'wss://') + '/ws'
-    : 'ws://localhost:3001/ws';
+export const API_BASE_URL = '';  // Use relative URLs
+export const WS_BASE_URL = 'wss://past-crimson-primrose.glitch.me/ws';
 
 export const ENDPOINTS = {
   AUTH: {
