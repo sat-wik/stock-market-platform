@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
-import { API_BASE_URL, ENDPOINTS } from '../config/api';
+import { API_BASE_URL, ENDPOINTS, WS_BASE_URL } from '../config/api';
 
 const StockContext = createContext();
 
@@ -59,9 +59,7 @@ export const StockProvider = ({ children }) => {
 
         const connectWebSocket = () => {
             console.log('Connecting to WebSocket...');
-            const wsUrl = process.env.NODE_ENV === 'production'
-                ? `wss://${window.location.host}/ws`
-                : `ws://localhost:3001/ws`;
+            const wsUrl = WS_BASE_URL;
             
             const socket = new WebSocket(wsUrl);
 

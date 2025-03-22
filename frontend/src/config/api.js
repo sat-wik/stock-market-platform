@@ -1,4 +1,7 @@
 export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+export const WS_BASE_URL = process.env.REACT_APP_API_URL 
+    ? `wss://${process.env.REACT_APP_API_URL.replace('https://', '')}/ws`
+    : 'ws://localhost:3001/ws';
 
 export const ENDPOINTS = {
   AUTH: {
