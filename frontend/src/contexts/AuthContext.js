@@ -2,12 +2,6 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../config/api';
 
-// Configure axios defaults
-axios.defaults.headers.post['Content-Type'] = 'application/json';
-axios.defaults.baseURL = API_BASE_URL;
-axios.defaults.withCredentials = true;
-axios.defaults.headers.common['Accept'] = 'application/json';
-
 // Create axios instance with custom config
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -17,6 +11,33 @@ const axiosInstance = axios.create({
         'Accept': 'application/json'
     }
 });
+
+// Add request interceptor
+axiosInstance.interceptors.request.use(
+    (config) => {
+        // Ensure withCredentials is set for every request
+        config.withCredentials = true;
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Add response interceptor for error handling
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response) {
+            console.error('Response error:', error.response.data);
+        } else if (error.request) {
+            console.error('Request error:', error.request);
+        } else {
+            console.error('Error:', error.message);
+        }
+        return Promise.reject(error);
+    }
+);
 
 const AuthContext = createContext(null);
 
