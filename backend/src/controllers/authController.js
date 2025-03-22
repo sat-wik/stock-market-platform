@@ -3,6 +3,12 @@ import { Op } from 'sequelize';
 import User from '../models/user.js';
 import sequelize from '../models/index.js';
 
+const setCORSHeaders = (res) => {
+    res.header('Access-Control-Allow-Origin', 'https://stock-market-platform.vercel.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+};
+
 export const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -15,6 +21,7 @@ export const register = async (req, res) => {
         });
 
         if (existingUser) {
+            setCORSHeaders(res);
             return res.status(400).json({
                 error: 'User with this email or username already exists'
             });
@@ -34,6 +41,7 @@ export const register = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
 
+        setCORSHeaders(res);
         res.status(201).json({
             user: {
                 id: user.id,
@@ -59,6 +67,7 @@ export const login = async (req, res) => {
 
         if (!user) {
             console.log('User not found');
+            setCORSHeaders(res);
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
@@ -68,6 +77,7 @@ export const login = async (req, res) => {
 
         if (!isValidPassword) {
             console.log('Invalid password');
+            setCORSHeaders(res);
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
@@ -89,6 +99,7 @@ export const login = async (req, res) => {
         };
 
         console.log('Login successful:', { userId: user.id });
+        setCORSHeaders(res);
         res.json(response);
     } catch (error) {
         console.error('Login error:', error);
