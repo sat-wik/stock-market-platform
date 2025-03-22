@@ -1,0 +1,17 @@
+{
+  "install": "npm install",
+  "start": "npm start",
+  "watch": {
+    "install": {
+      "include": [
+        "^package\\.json$"
+      ]
+    },
+    "restart": {
+      "include": [
+        "^\\.env$",
+        "^backend/"
+      ]
+    }
+  }
+}
