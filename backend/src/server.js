@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import dotenv from 'dotenv';
@@ -8,6 +7,7 @@ import setupAssociations from './models/associations.js';
 import authRoutes from './routes/authRoutes.js';
 import stockRoutes from './routes/stockRoutes.js';
 import stockService from './services/stockService.js';
+import { corsMiddleware } from './middleware/cors.js';
 
 dotenv.config();
 
@@ -72,35 +72,8 @@ wss.on('connection', (ws, req) => {
     });
 });
 
-// CORS middleware
-const corsOptions = {
-    origin: function(origin, callback) {
-        const allowedOrigins = [
-            'http://localhost:3000',
-            'http://127.0.0.1:65033',
-            'https://stock-market-platform.vercel.app'
-        ];
-        
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-};
-
-app.use(cors(corsOptions));
-
-// Pre-flight requests
-app.options('*', cors(corsOptions));
+// Apply custom CORS middleware
+app.use(corsMiddleware);
 
 // Body parsing middleware
 app.use(express.json());

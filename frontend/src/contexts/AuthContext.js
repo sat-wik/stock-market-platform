@@ -7,40 +7,15 @@ const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
     withCredentials: true,
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    },
-    xsrfCookieName: 'XSRF-TOKEN',
-    xsrfHeaderName: 'X-XSRF-TOKEN'
-});
-
-// Set default config for all requests
-axiosInstance.defaults.withCredentials = true;
-axiosInstance.defaults.crossDomain = true;
-
-// Add request interceptor
-axiosInstance.interceptors.request.use(
-    (config) => {
-        // Ensure withCredentials is set for every request
-        config.withCredentials = true;
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+        'Content-Type': 'application/json'
     }
-);
+});
 
 // Add response interceptor for error handling
 axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response) {
-            console.error('Response error:', error.response.data);
-        } else if (error.request) {
-            console.error('Request error:', error.request);
-        } else {
-            console.error('Error:', error.message);
-        }
+    response => response,
+    error => {
+        console.error('API Error:', error);
         return Promise.reject(error);
     }
 );
@@ -84,16 +59,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             console.log('Making login request...');
-            const response = await axiosInstance.post('/api/auth/login', {
-                email,
-                password
-            }, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            });
+            const response = await axiosInstance.post('/api/auth/login', { email, password });
             
             console.log('Login response:', response.data);
             const { token: newToken, user } = response.data;
