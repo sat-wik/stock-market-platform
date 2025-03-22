@@ -6,7 +6,17 @@ import { API_BASE_URL } from '../config/api';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true;
-// Remove Access-Control-Allow-Origin header as it should be set by the server
+axios.defaults.headers.common['Accept'] = 'application/json';
+
+// Create axios instance with custom config
+const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+});
 
 const AuthContext = createContext(null);
 
@@ -26,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get('/api/auth/profile', {
+            const response = await axiosInstance.get('/api/auth/profile', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -47,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             console.log('Making login request...');
-            const response = await axios.post('/api/auth/login', {
+            const response = await axiosInstance.post('/api/auth/login', {
                 email,
                 password
             });
