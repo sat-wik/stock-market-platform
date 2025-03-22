@@ -6,46 +6,15 @@ import { API_BASE_URL } from '../config/api';
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    },
-    timeout: 10000 // 10 seconds timeout
-});
-
-// Add request interceptor to log requests
-axiosInstance.interceptors.request.use(
-    config => {
-        console.log(`Making ${config.method.toUpperCase()} request to ${config.url}`);
-        console.log('Request headers:', config.headers);
-        return config;
-    },
-    error => {
-        console.error('Request error:', error);
-        return Promise.reject(error);
+        'Content-Type': 'application/json'
     }
-);
+});
 
 // Add response interceptor for error handling
 axiosInstance.interceptors.response.use(
-    response => {
-        console.log(`Received response from ${response.config.url}:`, response.status);
-        return response;
-    },
+    response => response,
     error => {
-        if (error.code === 'ERR_NETWORK') {
-            console.error('Network error - please check your connection and try again');
-            console.error('API URL:', API_BASE_URL);
-        } else if (error.response) {
-            console.error('Response error:', {
-                status: error.response.status,
-                data: error.response.data,
-                headers: error.response.headers
-            });
-        } else if (error.request) {
-            console.error('Request error - no response received');
-        } else {
-            console.error('Error:', error.message);
-        }
+        console.error('API Error:', error.message);
         return Promise.reject(error);
     }
 );

@@ -1,13 +1,13 @@
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import { initDatabase } from './models/index.js';
 import setupAssociations from './models/associations.js';
 import authRoutes from './routes/authRoutes.js';
 import stockRoutes from './routes/stockRoutes.js';
 import stockService from './services/stockService.js';
-import { corsMiddleware } from './middleware/cors.js';
 
 dotenv.config();
 
@@ -72,8 +72,12 @@ wss.on('connection', (ws, req) => {
     });
 });
 
-// Apply custom CORS middleware
-app.use(corsMiddleware);
+// CORS configuration
+app.use(cors({
+    origin: 'https://stock-market-platform.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Body parsing middleware
 app.use(express.json());
