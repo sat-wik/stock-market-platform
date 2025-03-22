@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
+import { API_BASE_URL, ENDPOINTS } from '../config/api';
 
 const StockContext = createContext();
 
@@ -29,7 +30,7 @@ export const StockProvider = ({ children }) => {
             setLoading(prev => ({ ...prev, watchlist: true }));
             setErrors(prev => ({ ...prev, watchlist: null }));
 
-            const response = await axios.get('http://localhost:3001/api/stocks/watchlist', {
+            const response = await axios.get(`${API_BASE_URL}${ENDPOINTS.STOCKS.WATCHLIST}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -149,7 +150,7 @@ export const StockProvider = ({ children }) => {
 
     const subscribeToStock = async (symbol) => {
         try {
-            await axios.post('http://localhost:3001/api/stocks/subscribe', { symbol }, {
+            await axios.post(`${API_BASE_URL}/api/stocks/subscribe`, { symbol }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -162,7 +163,7 @@ export const StockProvider = ({ children }) => {
 
     const unsubscribeFromStock = async (symbol) => {
         try {
-            await axios.post('http://localhost:3001/api/stocks/unsubscribe', { symbol }, {
+            await axios.post(`${API_BASE_URL}/api/stocks/unsubscribe`, { symbol }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -178,7 +179,7 @@ export const StockProvider = ({ children }) => {
             setLoading(prev => ({ ...prev, [symbol]: true }));
             setErrors(prev => ({ ...prev, [symbol]: null }));
 
-            const response = await axios.get(`http://localhost:3001/api/stocks/quote/${symbol}`, {
+            const response = await axios.get(`${API_BASE_URL}${ENDPOINTS.STOCKS.QUOTE(symbol)}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -208,7 +209,7 @@ export const StockProvider = ({ children }) => {
             setLoading(prev => ({ ...prev, [`watchlist_${symbol}`]: true }));
             setErrors(prev => ({ ...prev, [`watchlist_${symbol}`]: null }));
 
-            const response = await axios.patch('http://localhost:3001/api/stocks/watchlist', {
+            const response = await axios.patch(`${API_BASE_URL}${ENDPOINTS.STOCKS.WATCHLIST}`, {
                 symbol,
                 action
             }, {

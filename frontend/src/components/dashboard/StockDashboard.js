@@ -19,6 +19,7 @@ import {
     CircularProgress,
     useTheme
 } from '@mui/material';
+import { API_BASE_URL, ENDPOINTS } from '../../config/api';
 import { 
     Add as AddIcon, 
     Remove as RemoveIcon,

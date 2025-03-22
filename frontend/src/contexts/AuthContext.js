@@ -3,7 +3,9 @@ import axios from 'axios';
 
 // Configure axios defaults
 axios.defaults.headers.post['Content-Type'] = 'application/json';
-axios.defaults.baseURL = 'http://localhost:3001';
+import { API_BASE_URL } from '../config/api';
+
+axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true;
 // Remove Access-Control-Allow-Origin header as it should be set by the server
 
