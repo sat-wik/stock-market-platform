@@ -22,15 +22,9 @@ services:
       - DB_PASSWORD=postgres
       - JWT_SECRET=${JWT_SECRET:-your-dev-secret-key}
       - JWT_EXPIRES_IN=24h
-      - ML_SERVICE_URL=http://ml-service:5000
-      - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY}
+      - FINNHUB_API_KEY=${FINNHUB_API_KEY}
     depends_on:
       - db
-
-  ml-service:
-    build: ./ml-service
-    ports:
-      - "5000:5000"
 
   db:
     image: postgres:13

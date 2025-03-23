@@ -21,8 +21,6 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 24h
-      - key: ML_SERVICE_URL
-        value: https://stock-market-platform-ml.onrender.com
-      - key: ALPHA_VANTAGE_API_KEY
+      - key: FINNHUB_API_KEY
         sync: false
     healthCheckPath: /api/health
