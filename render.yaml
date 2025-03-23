@@ -1,4 +1,9 @@
 services:
+  - type: postgres
+    name: stock-market-db
+    plan: free
+    ipAllowList: [] # allow all connections
+
   - type: web
     name: stock-market-platform-api
     env: node
@@ -10,16 +15,30 @@ services:
       - key: PORT
         value: 3001
       - key: DB_HOST
-        sync: false
+        fromService:
+          type: postgres
+          name: stock-market-db
+          property: host
       - key: DB_NAME
-        sync: false
+        fromService:
+          type: postgres
+          name: stock-market-db
+          property: database
       - key: DB_USER
-        sync: false
+        fromService:
+          type: postgres
+          name: stock-market-db
+          property: user
       - key: DB_PASSWORD
-        sync: false
+        fromService:
+          type: postgres
+          name: stock-market-db
+          property: password
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 24h
       - key: FINNHUB_API_KEY
         sync: false
+    dependsOn:
+      - stock-market-db
