@@ -1,4 +1,5 @@
 import WebSocket from 'ws';
+import { checkAlerts } from '../controllers/alertController.js';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
@@ -37,12 +38,30 @@ class StockService {
                 this.processSubscriptionQueue();
             });
 
-            this.ws.on('message', (data) => {
+            this.ws.on('message', async (data) => {
                 const parsedData = JSON.parse(data);
                 if (parsedData.type === 'trade') {
                     const { s: symbol, p: price, t: timestamp } = parsedData.data[0];
                     this.stockData.set(symbol, { price, timestamp });
-                    this.broadcast(JSON.stringify({ type: 'price', symbol, price, timestamp }));
+
+                    // Check for triggered alerts
+                    const triggeredAlerts = await checkAlerts(symbol, price);
+                    
+                    // If there are triggered alerts, include them in the broadcast
+                    const message = {
+                        type: 'price',
+                        symbol,
+                        price,
+                        timestamp,
+                        alerts: triggeredAlerts.map(alert => ({
+                            id: alert.id,
+                            userId: alert.userId,
+                            targetPrice: alert.targetPrice,
+                            condition: alert.condition
+                        }))
+                    };
+
+                    this.broadcast(JSON.stringify(message));
                 }
             });
 

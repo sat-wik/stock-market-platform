@@ -35,6 +35,7 @@ import {
     Legend
 } from 'chart.js';
 import { useStock } from '../../contexts/StockContext';
+import PriceAlerts from '../alerts/PriceAlerts';
 
 // Register ChartJS components
 ChartJS.register(
@@ -198,6 +199,13 @@ const StockDashboard = () => {
                 </Grid>
 
                 {/* Watchlist */}
+                <Grid item xs={12} md={4}>
+                    <Card>
+                        <CardContent>
+                            <PriceAlerts symbol={selectedStock} />
+                        </CardContent>
+                    </Card>
+                </Grid>
                 <Grid item xs={12} md={4}>
                     <Card 
                         elevation={0}

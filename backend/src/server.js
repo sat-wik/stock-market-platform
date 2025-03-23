@@ -6,6 +6,7 @@ import cors from 'cors';
 import { initDatabase } from './models/index.js';
 import setupAssociations from './models/associations.js';
 import authRoutes from './routes/authRoutes.js';
+import alertRoutes from './routes/alertRoutes.js';
 import stockRoutes from './routes/stockRoutes.js';
 import stockService from './services/stockService.js';
 
@@ -108,6 +109,7 @@ setupAssociations();
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+app.use('/api/alerts', alertRoutes);
 
 // Stock routes
 app.use('/api/stocks', stockRoutes);
