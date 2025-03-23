@@ -15,43 +15,104 @@ class StockService {
         this.clients = new Set();
         this.stockData = new Map();
         this.subscribedSymbols = new Set();
+        this.subscriptionQueue = [];
+        this.isProcessingQueue = false;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 5;
         this.connect();
     }
 
     connect() {
-        this.ws = new WebSocket(FINNHUB_WS_URL);
+        console.log('Connecting to Finnhub WebSocket...');
+        try {
+            this.ws = new WebSocket(FINNHUB_WS_URL);
 
-        this.ws.on('open', () => {
-            console.log('Connected to Finnhub WebSocket');
-            // Resubscribe to all symbols
-            this.subscribedSymbols.forEach(symbol => {
-                this.subscribe(symbol);
+            this.ws.on('open', () => {
+                console.log('Connected to Finnhub WebSocket');
+                this.reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+                // Resubscribe to all symbols gradually
+                this.subscribedSymbols.forEach(symbol => {
+                    this.queueSubscription(symbol);
+                });
+                this.processSubscriptionQueue();
             });
-        });
 
-        this.ws.on('message', (data) => {
-            const parsedData = JSON.parse(data);
-            if (parsedData.type === 'trade') {
-                const { s: symbol, p: price, t: timestamp } = parsedData.data[0];
-                this.stockData.set(symbol, { price, timestamp });
-                this.broadcast(JSON.stringify({ type: 'price', symbol, price, timestamp }));
-            }
-        });
+            this.ws.on('message', (data) => {
+                const parsedData = JSON.parse(data);
+                if (parsedData.type === 'trade') {
+                    const { s: symbol, p: price, t: timestamp } = parsedData.data[0];
+                    this.stockData.set(symbol, { price, timestamp });
+                    this.broadcast(JSON.stringify({ type: 'price', symbol, price, timestamp }));
+                }
+            });
 
-        this.ws.on('close', () => {
-            console.log('Disconnected from Finnhub WebSocket');
+            this.ws.on('close', () => {
+                console.log('Disconnected from Finnhub WebSocket');
+                setTimeout(() => this.connect(), 5000);
+            });
+
+            this.ws.on('error', (error) => {
+                console.error('WebSocket error:', error);
+                if (error.code === 429) {
+                    console.log('Rate limit exceeded, implementing backoff strategy');
+                    // Implement exponential backoff
+                    const backoffDelay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+                    this.reconnectAttempts++;
+                    setTimeout(() => this.connect(), backoffDelay);
+                }
+            });
+        } catch (error) {
+            console.error('Error connecting to WebSocket:', error);
             setTimeout(() => this.connect(), 5000);
-        });
+        }
 
-        this.ws.on('error', (error) => {
-            console.error('WebSocket error:', error);
-        });
+
+    }
+
+    queueSubscription(symbol) {
+        this.subscriptionQueue.push(symbol);
+        if (!this.isProcessingQueue) {
+            this.processSubscriptionQueue();
+        }
+    }
+
+    async processSubscriptionQueue() {
+        if (this.isProcessingQueue || this.subscriptionQueue.length === 0) {
+            return;
+        }
+
+        this.isProcessingQueue = true;
+        while (this.subscriptionQueue.length > 0) {
+            const symbol = this.subscriptionQueue.shift();
+            if (this.ws.readyState === WebSocket.OPEN) {
+                try {
+                    this.ws.send(JSON.stringify({ type: 'subscribe', symbol }));
+                    this.subscribedSymbols.add(symbol);
+                    // Add delay between subscriptions to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (error) {
+                    console.error(`Error subscribing to ${symbol}:`, error);
+                    // Put the symbol back in the queue if there was an error
+                    this.subscriptionQueue.push(symbol);
+                    break;
+                }
+            } else {
+                // WebSocket not ready, put symbol back in queue
+                this.subscriptionQueue.push(symbol);
+                break;
+            }
+        }
+        this.isProcessingQueue = false;
+
+        // If there are remaining symbols and the WebSocket is open, continue processing
+        if (this.subscriptionQueue.length > 0 && this.ws.readyState === WebSocket.OPEN) {
+            setTimeout(() => this.processSubscriptionQueue(), 1000);
+        }
     }
 
     subscribe(symbol) {
-        if (this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(JSON.stringify({ type: 'subscribe', symbol }));
-            this.subscribedSymbols.add(symbol);
+        if (!this.subscribedSymbols.has(symbol)) {
+            this.queueSubscription(symbol);
         }
     }
 
