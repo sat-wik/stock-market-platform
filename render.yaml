@@ -1,9 +1,4 @@
 services:
-  - type: postgres
-    name: stock-market-db
-    plan: free
-    ipAllowList: [] # allow all connections
-
   - type: web
     name: stock-market-platform-api
     env: node
@@ -14,31 +9,11 @@ services:
         value: production
       - key: PORT
         value: 3001
-      - key: DB_HOST
-        fromService:
-          type: postgres
-          name: stock-market-db
-          property: host
-      - key: DB_NAME
-        fromService:
-          type: postgres
-          name: stock-market-db
-          property: database
-      - key: DB_USER
-        fromService:
-          type: postgres
-          name: stock-market-db
-          property: user
-      - key: DB_PASSWORD
-        fromService:
-          type: postgres
-          name: stock-market-db
-          property: password
+      - key: DATABASE_URL
+        sync: false # Add your Neon database URL in Render dashboard
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 24h
       - key: FINNHUB_API_KEY
         sync: false
-    dependsOn:
-      - stock-market-db
