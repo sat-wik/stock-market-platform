@@ -17,7 +17,7 @@ export const StockProvider = ({ children }) => {
     const [errors, setErrors] = useState({});
     const [ws, setWs] = useState(null);
 
-    const getStockQuote = async (symbol) => {
+    const getStockQuote = React.useCallback(async (symbol) => {
         try {
             setLoading(prev => ({ ...prev, [symbol]: true }));
             setErrors(prev => ({ ...prev, [symbol]: null }));
@@ -45,9 +45,9 @@ export const StockProvider = ({ children }) => {
         } finally {
             setLoading(prev => ({ ...prev, [symbol]: false }));
         }
-    };
+    }, [token]);
 
-    const subscribeToStock = async (symbol) => {
+    const subscribeToStock = React.useCallback(async (symbol) => {
         try {
             await axios.post(`${API_BASE_URL}/api/stocks/subscribe`, { symbol }, {
                 headers: {
@@ -58,7 +58,7 @@ export const StockProvider = ({ children }) => {
         } catch (error) {
             console.error('Error subscribing to stock:', error);
         }
-    };
+    }, [token]);
 
     const loadWatchlist = React.useCallback(async () => {
         try {
