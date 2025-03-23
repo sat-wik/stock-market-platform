@@ -99,19 +99,28 @@ export const StockProvider = ({ children }) => {
         let reconnectAttempts = 0;
         const maxReconnectAttempts = 5;
         let reconnectTimeout;
+        let isConnecting = false;
 
         const connectWebSocket = () => {
-            console.log('Connecting to WebSocket...');
-            const wsUrl = WS_BASE_URL;
-            
-            const socket = new WebSocket(wsUrl);
+            if (isConnecting) return;
+            isConnecting = true;
+
+            console.log('Connecting to WebSocket...', WS_BASE_URL);
+            const socket = new WebSocket(WS_BASE_URL);
 
             socket.onopen = () => {
                 console.log('WebSocket connected successfully');
+                isConnecting = false;
                 reconnectAttempts = 0;
+                setWs(socket);
+
                 // Send authentication token if available
                 if (token) {
-                    socket.send(JSON.stringify({ type: 'auth', token }));
+                    socket.send(JSON.stringify({ 
+                        type: 'auth', 
+                        token,
+                        timestamp: new Date().toISOString()
+                    }));
                 }
             };
             
@@ -127,6 +136,8 @@ export const StockProvider = ({ children }) => {
                                 timestamp: data.timestamp
                             }
                         }));
+                    } else if (data.type === 'error') {
+                        console.error('WebSocket server error:', data.message);
                     }
                 } catch (error) {
                     console.error('Error processing WebSocket message:', error);
@@ -135,10 +146,12 @@ export const StockProvider = ({ children }) => {
 
             socket.onerror = (error) => {
                 console.error('WebSocket error:', error);
+                isConnecting = false;
             };
 
             socket.onclose = (event) => {
                 console.log('WebSocket closed:', event.code, event.reason);
+                isConnecting = false;
                 setWs(null);
 
                 if (reconnectAttempts < maxReconnectAttempts) {
@@ -152,21 +165,22 @@ export const StockProvider = ({ children }) => {
                     console.error('Max reconnection attempts reached');
                 }
             };
-
-            setWs(socket);
         };
 
-        connectWebSocket();
+        if (!ws && token) {
+            connectWebSocket();
+        }
 
         return () => {
+            isConnecting = false;
             if (ws) {
-                ws.close();
+                ws.close(1000, 'Component unmounting');
             }
             if (reconnectTimeout) {
                 clearTimeout(reconnectTimeout);
             }
         };
-    }, [token, ws]);
+    }, [token]);
 
     // Configure axios with auth token
     useEffect(() => {
