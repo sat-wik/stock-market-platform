@@ -1,24 +1,20 @@
 {
-  "rewrites": [
-    { 
-      "source": "/api/:path*", 
-      "destination": "https://past-crimson-primrose.glitch.me/api/:path*" 
-    }
-  ],
   "routes": [
     {
       "src": "/api/(.*)",
+      "dest": "https://past-crimson-primrose.glitch.me/api/$1",
       "headers": {
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Origin": "https://stock-market-platform.vercel.app",
         "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
         "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
       },
-      "continue": true
+      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/index.html",
+      "status": 200
     }
   ],
   "buildCommand": "npm run build",
