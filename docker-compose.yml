@@ -14,9 +14,16 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/stock_market
-      - NODE_ENV=production
-      - JWT_SECRET=${JWT_SECRET}
+      - PORT=3001
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_NAME=stock_market
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - JWT_SECRET=${JWT_SECRET:-your-dev-secret-key}
+      - JWT_EXPIRES_IN=24h
+      - ML_SERVICE_URL=http://ml-service:5000
+      - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY}
     depends_on:
       - db
 
