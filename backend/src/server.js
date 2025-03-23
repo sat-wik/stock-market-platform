@@ -93,6 +93,11 @@ app.use((req, res, next) => {
     next();
 });
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
+});
+
 // Test route
 app.get('/api/test', (req, res) => {
     res.json({ message: 'API is working' });

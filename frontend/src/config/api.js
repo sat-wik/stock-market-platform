@@ -1,6 +1,6 @@
 const isDevelopment = process.env.NODE_ENV === 'development';
-export const API_BASE_URL = isDevelopment ? 'http://localhost:3001' : '';
-export const WS_BASE_URL = isDevelopment ? 'ws://localhost:3001/ws' : 'wss://past-crimson-primrose.glitch.me/ws';
+export const API_BASE_URL = isDevelopment ? 'http://localhost:3001' : 'https://stock-market-platform-api.onrender.com';
+export const WS_BASE_URL = isDevelopment ? 'ws://localhost:3001/ws' : 'wss://stock-market-platform-api.onrender.com/ws';
 
 export const ENDPOINTS = {
   AUTH: {
