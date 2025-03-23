@@ -1,9 +1,9 @@
 services:
   - type: web
     name: stock-market-platform-api
-    env: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -23,4 +23,3 @@ services:
         value: 24h
       - key: FINNHUB_API_KEY
         sync: false
-    healthCheckPath: /api/health

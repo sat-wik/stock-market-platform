@@ -9,7 +9,7 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Run migrations and start the server
-CMD ["sh", "-c", "npm run migrate && npm start"]
+# Start the server
+CMD ["npm", "start"]
 
 EXPOSE 3001
