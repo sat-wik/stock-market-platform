@@ -27,33 +27,33 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axiosInstance.get('/api/auth/profile', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                setUser(response.data.user);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                localStorage.removeItem('token');
+                setToken(null);
+                setUser(null);
+                delete axios.defaults.headers.common['Authorization'];
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (token) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             fetchUser();
         } else {
             setLoading(false);
         }
-    }, [token, fetchUser]);
-
-    const fetchUser = async () => {
-        try {
-            const response = await axiosInstance.get('/api/auth/profile', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            setUser(response.data.user);
-        } catch (error) {
-            console.error('Error fetching user:', error);
-            localStorage.removeItem('token');
-            setToken(null);
-            setUser(null);
-            delete axios.defaults.headers.common['Authorization'];
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [token]);
 
     const login = async (email, password) => {
         try {

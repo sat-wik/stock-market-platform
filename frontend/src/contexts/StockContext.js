@@ -17,13 +17,48 @@ export const StockProvider = ({ children }) => {
     const [errors, setErrors] = useState({});
     const [ws, setWs] = useState(null);
 
-    // Initialize WebSocket connection
-    // Load watchlist on mount
-    useEffect(() => {
-        if (token) {
-            loadWatchlist();
+    const getStockQuote = async (symbol) => {
+        try {
+            setLoading(prev => ({ ...prev, [symbol]: true }));
+            setErrors(prev => ({ ...prev, [symbol]: null }));
+
+            const response = await axios.get(`${API_BASE_URL}${ENDPOINTS.STOCKS.QUOTE(symbol)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            setStockData(prev => ({
+                ...prev,
+                [symbol]: {
+                    ...response.data,
+                    lastUpdated: new Date().toISOString()
+                }
+            }));
+
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || 'Failed to fetch stock data';
+            setErrors(prev => ({ ...prev, [symbol]: errorMessage }));
+            throw error;
+        } finally {
+            setLoading(prev => ({ ...prev, [symbol]: false }));
         }
-    }, [token, loadWatchlist]);
+    };
+
+    const subscribeToStock = async (symbol) => {
+        try {
+            await axios.post(`${API_BASE_URL}/api/stocks/subscribe`, { symbol }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+        } catch (error) {
+            console.error('Error subscribing to stock:', error);
+        }
+    };
 
     const loadWatchlist = React.useCallback(async () => {
         try {
@@ -50,7 +85,15 @@ export const StockProvider = ({ children }) => {
         } finally {
             setLoading(prev => ({ ...prev, watchlist: false }));
         }
-    }, [token, subscribeToStock, getStockQuote, API_BASE_URL, ENDPOINTS.STOCKS.WATCHLIST]);
+    }, [token, subscribeToStock, getStockQuote]);
+
+    // Initialize WebSocket connection
+    // Load watchlist on mount
+    useEffect(() => {
+        if (token) {
+            loadWatchlist();
+        }
+    }, [token, loadWatchlist]);
 
     useEffect(() => {
         let reconnectAttempts = 0;
@@ -146,19 +189,6 @@ export const StockProvider = ({ children }) => {
         };
     }, [token]);
 
-    const subscribeToStock = async (symbol) => {
-        try {
-            await axios.post(`${API_BASE_URL}/api/stocks/subscribe`, { symbol }, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-        } catch (error) {
-            console.error('Error subscribing to stock:', error);
-        }
-    };
-
     const unsubscribeFromStock = async (symbol) => {
         try {
             await axios.post(`${API_BASE_URL}/api/stocks/unsubscribe`, { symbol }, {
@@ -169,36 +199,6 @@ export const StockProvider = ({ children }) => {
             });
         } catch (error) {
             console.error('Error unsubscribing from stock:', error);
-        }
-    };
-
-    const getStockQuote = async (symbol) => {
-        try {
-            setLoading(prev => ({ ...prev, [symbol]: true }));
-            setErrors(prev => ({ ...prev, [symbol]: null }));
-
-            const response = await axios.get(`${API_BASE_URL}${ENDPOINTS.STOCKS.QUOTE(symbol)}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            setStockData(prev => ({
-                ...prev,
-                [symbol]: {
-                    ...response.data,
-                    lastUpdated: new Date().toISOString()
-                }
-            }));
-
-            return response.data;
-        } catch (error) {
-            const errorMessage = error.response?.data?.error || 'Failed to fetch stock data';
-            setErrors(prev => ({ ...prev, [symbol]: errorMessage }));
-            throw error;
-        } finally {
-            setLoading(prev => ({ ...prev, [symbol]: false }));
         }
     };
 
