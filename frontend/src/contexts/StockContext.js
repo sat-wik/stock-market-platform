@@ -180,7 +180,7 @@ export const StockProvider = ({ children }) => {
                 clearTimeout(reconnectTimeout);
             }
         };
-    }, [token]);
+    }, [token, ws]);
 
     // Configure axios with auth token
     useEffect(() => {
