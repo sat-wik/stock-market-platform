@@ -22,6 +22,14 @@ import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import axios from 'axios';
 
 const PriceAlerts = ({ symbol }) => {
+    if (!symbol) {
+        return (
+            <Box>
+                <Typography variant="h6">Price Alerts</Typography>
+                <Typography color="textSecondary">Select a stock to manage alerts</Typography>
+            </Box>
+        );
+    }
     const [alerts, setAlerts] = useState([]);
     const [open, setOpen] = useState(false);
     const [targetPrice, setTargetPrice] = useState('');

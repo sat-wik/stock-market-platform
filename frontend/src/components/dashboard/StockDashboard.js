@@ -50,6 +50,7 @@ ChartJS.register(
 
 const StockDashboard = () => {
     const theme = useTheme();
+    const { selectedStock } = useStock();
     const { watchlist, stockData, updateWatchlist, getStockQuote } = useStock();
     const [newSymbol, setNewSymbol] = useState('');
     const [priceHistory, setPriceHistory] = useState({});
