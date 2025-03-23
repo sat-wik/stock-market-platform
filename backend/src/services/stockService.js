@@ -23,7 +23,7 @@ class StockService {
     }
 
     connect() {
-        console.log('Connecting to Finnhub WebSocket...');
+        console.log('Connecting to Finnhub WebSocket API...');
         try {
             this.ws = new WebSocket(FINNHUB_WS_URL);
 
