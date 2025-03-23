@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon --experimental-json-modules src/server.js",
+    "dev": "NODE_ENV=development node --env-file=.env.development --watch src/server.js",
     "test": "jest"
   },
   "dependencies": {
