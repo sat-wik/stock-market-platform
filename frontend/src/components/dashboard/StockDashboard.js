@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
     Container,
     Grid,
-    Paper,
     Typography,
     TextField,
     Button,
     List,
     ListItem,
-    ListItemText,
     IconButton,
     Box,
     Card,
@@ -19,9 +17,7 @@ import {
     CircularProgress,
     useTheme
 } from '@mui/material';
-import { API_BASE_URL, ENDPOINTS } from '../../config/api';
 import { 
-    Add as AddIcon, 
     Remove as RemoveIcon,
     TrendingUp as TrendingUpIcon,
     TrendingDown as TrendingDownIcon,

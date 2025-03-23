@@ -23,9 +23,9 @@ export const StockProvider = ({ children }) => {
         if (token) {
             loadWatchlist();
         }
-    }, [token]);
+    }, [token, loadWatchlist]);
 
-    const loadWatchlist = async () => {
+    const loadWatchlist = React.useCallback(async () => {
         try {
             setLoading(prev => ({ ...prev, watchlist: true }));
             setErrors(prev => ({ ...prev, watchlist: null }));
@@ -50,7 +50,7 @@ export const StockProvider = ({ children }) => {
         } finally {
             setLoading(prev => ({ ...prev, watchlist: false }));
         }
-    };
+    }, [token, subscribeToStock, getStockQuote, API_BASE_URL, ENDPOINTS.STOCKS.WATCHLIST]);
 
     useEffect(() => {
         let reconnectAttempts = 0;
@@ -123,7 +123,7 @@ export const StockProvider = ({ children }) => {
                 clearTimeout(reconnectTimeout);
             }
         };
-    }, [token]);
+    }, [token, ws]);
 
     // Configure axios with auth token
     useEffect(() => {
