@@ -31,10 +31,13 @@ export const register = async (req, res) => {
         });
 
         // Generate JWT token
+        // Parse JWT expiration time
+        const expiresIn = parseInt(process.env.JWT_EXPIRES_IN, 10) || 86400; // Default to 24h in seconds
+        
         const token = jwt.sign(
             { id: user.id },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN }
+            { expiresIn }
         );
 
 
@@ -78,10 +81,12 @@ export const login = async (req, res) => {
         }
 
         // Generate JWT token
+        const expiresIn = parseInt(process.env.JWT_EXPIRES_IN, 10) || 86400; // Default to 24h in seconds
+        
         const token = jwt.sign(
             { id: user.id },
-            process.env.JWT_SECRET || 'your-secret-key',
-            { expiresIn: '24h' }
+            process.env.JWT_SECRET,
+            { expiresIn }
         );
 
         const response = {
